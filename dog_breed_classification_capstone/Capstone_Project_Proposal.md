@@ -27,7 +27,7 @@ The goal of this project is to build a machine learning - deep learning specific
 
 Fortunately this dataset is supplied by the Udacity Machine Learning Engineer Nanodegree Course.  The dataset consists of already segregated training, validation and test groups.  The input images must be colour images, though they can be of any resolution.  Of course these must be images as the goal is to idenify what the canine breed would be in an image.  In addition, the dataset consists of both dogs and humans.
 
-For the dog images dataset, the images are of various resolutions but there are 8,351 images which are further segregated into 6,680 images for the training set, 836 images for the validation dataset and 835 images for the test dataset, approximately creating an 80%-10%-10% split.  The images contain different backgrounds, and for each category the images are not balanced.  Specifically, there are more images in one category than another.  The number can vary between 4 and 8 images per category.
+For the dog images dataset, the images are of various resolutions but there are 8,351 images which are further segregated into 6,680 images for the training set, 836 images for the validation dataset and 835 images for the test dataset, approximately creating an 80%-10%-10% split.  The images contain different backgrounds, and for each category the images are not balanced.  Specifically, there are more images in one category than another.
 
 For the human images dataset, this contains 13233 total human images which are sorted by their corresponding names with each name in a directory.  There are 5,750 unique names and each image is of size 250 x 250.  The images also have different backgrounds and perspectives.  The data is also not balanced as some directories have only one image when other directories have several images.
 
@@ -35,15 +35,15 @@ There are an abundance of dog and human images which should be enough for a data
 
 ## Solution Statement
 
-Because there is an abundance of images, a Convolutional Neural Network (CNN) would be the most optimal (and obvious) choice here as neural networks are data-hungry, but because we have a large amount of data available, we would be able to create a set of filters, weights and biases to help us automatically solve this problem for us.  A CNN is designed to examine an image and extract an optimal feature representation that would be suitable for a classification algorithm to optimally choose the right class.  The classification algorithm would naturally be a multi-layer perceptron (MLP).  Therefore, the solution first involves training a CNN with the dog image dataset.  The choice of architecture for the CNN will require some experimentation and study but this will naturally be part of the exploratory analysis of the problem.  Secondly, we can use an already pre-trained solution to detect whether we can find a human face.  We can use OpenCV's Haar Cascades which have been carefully engineered to find human faces.  Thirdly, in order to distinguish between whether we see a human face or a dog face, we have to determine whether we can find a dog in the image first.  Creating a dog breed classifier only tells us the type of dog, but not if there's an actual dog appearing in the image.  Thankfully, we can use already pretrained networks that have been trained on the ImageNet database that do detect the existence of dogs but not to the granularity of what we expect from the proposed application.  A pretrained network like VGG16 can work here.  Therefore, the pipeline will be as follows:
+Because there is an abundance of images, a Convolutional Neural Network (CNN) would be the most optimal (and obvious) choice here as neural networks are data-hungry, but because we have a large amount of data available, we would be able to create a set of filters, weights and biases to help us automatically solve this problem for us.  A CNN is designed to examine an image and extract an optimal feature representation that would be suitable for a classification algorithm to optimally choose the right class.  The classification algorithm would naturally be a multi-layer perceptron (MLP).  Therefore, the solution first involves training a CNN with the dog image dataset.  The choice of architecture for the CNN will require some experimentation and study but this will naturally be part of the exploratory analysis of the problem.  Secondly, we can use an already pre-trained solution to detect whether we can find a human face.  We can use OpenCV's Haar Cascades which have been carefully engineered to find human faces.  Thirdly, in order to distinguish between whether we see a human face or a dog face, we have to determine whether we can find a dog in the image first.  Creating a dog breed classifier only tells us the type of dog, but not if there's an actual dog appearing in the image.  Thankfully, we can use already pretrained networks that have been trained on the ImageNet database that do detect the existence of dogs but not to the granularity of what we expect from the proposed application.  A pretrained network like VGG16 [[7]] can work here.  Therefore, the pipeline will be as follows:
 
-1. Use OpenCV's Haar Cascades to determine if we can find a human.  If yes, run the dog breed classifier to see what the closest dog breed is given the human image.
+1. Use OpenCV's Haar Cascades [[8]] to determine if we can find a human.  If yes, run the dog breed classifier to see what the closest dog breed is given the human image.
 2. Use a pretrained VGG16 network to determine if we see an actual dog in the image.  If yes, run the dog breed classifier to determine what the dog breed is.
 3. If neither (1) or (2) execute, produce an error.
 
 ## Benchmark Model
 
-Naturally since the solution to this would be CNNs, a benchmark model would be to try and create a CNN architecture from scratch to see if this solution is viable.  If we can create a CNN model "from scratch" which can achieve a test accuracy of say 10%, we can confirm that we would be able to train a network to achieve the desired result as this would be better than random guess, which is 1 / 133 or roughly less than 1%.  Once we confirm that we can create a CNN architecture from scratch that achieves this desired test accuracy, we would naturally transition to using a deeper network and transfer learning such that the deeper network has already been pretrained on the ImageNet database, but we change the final fully-connected layer that handles the classification of the image by fine-tuning the weights to account for the dog image dataset that we provide to it.  In this case, we hope to achieve a test accuracy of 60% or more.
+Naturally since the solution to this would be CNNs, a benchmark model would be to try and create a CNN architecture from scratch to see if this solution is viable.  If we can create a CNN model "from scratch" which can achieve a test accuracy of say 10%, we can confirm that we would be able to train a network to achieve the desired result as this would be better than random guess, which is 1 / 133 or roughly less than 1%.  Once we confirm that we can create a CNN architecture from scratch that achieves this desired test accuracy, we would naturally transition to using a deeper network and transfer learning such that the deeper network has already been pretrained on the ImageNet [[9]] database, but we change the final fully-connected layer that handles the classification of the image by fine-tuning the weights to account for the dog image dataset that we provide to it.  In this case, we hope to achieve a test accuracy of 60% or more.
 
 ## Evaluation metrics
 
@@ -66,11 +66,14 @@ The deep learning library we will be using for this task will by PyTorch.
 
 1. [Kaggle Competition - Dog Breed Classification][1]
 2. [How to easily build a dog breed image classification model - James Le - Medium][2]
-3. [Dog Breed Classification using CNNS - Deniz Doruk Nuhoglu - Towards Data Science][3]
+3. [Dog Breed Classification using CNNs - Deniz Doruk Nuhoglu - Towards Data Science][3]
 4. [Dog Breed Classification - mc.ai][4]
 5. [Dog Breed Classification using CNN and Transfer Learning - Li Liping - Gitconnected][5]
 6. [PyTorch](https://pytorch.org)
 7. [Deep Residual Learning for Image Recognition - Kaiming He et al. - arXiv][6]
+8. [Very Deep Convolutional Networks for Large Scale Image Recognition - Karen Simonyan and Andrew Zisserman][7]
+9. [OpenCV - Cascade Classifier][8]
+10. [ImageNet Database][9]
 
 [//]: # (References)
 [1]: https://www.kaggle.com/c/dog-breed-identification "Kaggle Competition - Dog Breed Classification"
@@ -79,3 +82,6 @@ The deep learning library we will be using for this task will by PyTorch.
 [4]: https://mc.ai/dog-breed-classification-using-cnn/ "mc.ai - Dog Breed Classification" 
 [5]: https://levelup.gitconnected.com/dog-breed-classification-using-cnn-and-transfer-learning-cc93a4497e90  "Li Liping - gitconnected"
 [6]: https://arxiv.org/abs/1512.03385 "ResNet"
+[7]: https://arxiv.org/abs/1409.1556 "VGGNet"
+[8]: https://docs.opencv.org/3.4/db/d28/tutorial_cascade_classifier.html
+[9]: http://www.image-net.org/
