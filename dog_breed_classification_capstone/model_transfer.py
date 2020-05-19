@@ -140,6 +140,64 @@ def get_labels():
 
     return labels
 
+class Net(nn.Module):
+    ### TODO: choose an architecture, and complete the class
+    def __init__(self):
+        super(Net, self).__init__()
+        ## Define layers of a CNN
+
+        # Define 3 Conv 2D layers with progressively larger
+        # numbers of filters.  First two will have stride of 2
+        # to prevent overfitting.  Last one has stride 1
+        self.conv1 = nn.Conv2d(3, 32, 3, stride=2, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, 3, stride=2, padding=1)
+        self.conv3 = nn.Conv2d(64, 128, 3, padding=1)
+
+        # Max Pooling 2D after each Conv
+        self.pool = nn.MaxPool2d(2, 2)
+
+        # FC layers for non-linear mapping of features
+        # to classifying dog
+        self.fc1 = nn.Linear(7*7*128, 512)
+        # One more for good measure
+        self.fc2 = nn.Linear(512, 133)
+
+        # Define dropout
+        self.dropout = nn.Dropout(0.25)
+
+    def forward(self, x):
+        ## Define forward behavior
+        # 3 x 224 x 224
+
+        # CONV-RELU-POOL 1
+        x = F.relu(self.conv1(x)) # 32 x 112 x 112
+        x = self.pool(x) # 32 x 56 x 56
+
+        # CONV-RELU-POOL 2
+        x = F.relu(self.conv2(x)) # 64 x 28 x 28
+        x = self.pool(x) # 64 x 14 x 14
+
+        # CONV-RELU-POOL 3
+        x = F.relu(self.conv3(x)) # 128 x 14 x 14 - note stride=1
+        x = self.pool(x) # 128 x 7 x 7
+
+        # Flatten
+        x = x.view(x.size(0), -1)
+
+        # DROPOUT-FC-RELU
+        x = self.dropout(x)
+        x = F.relu(self.fc1(x)) 
+
+        # DROPOUT-FC
+        x = self.dropout(x)
+        x = self.fc2(x)
+
+        # Return raw activations as we're using nn.CrossEntropyLoss
+        return x
+
+def create_dog_breed_classification_model_scratch():
+    return Net()
+
 def create_dog_breed_classification_model():
     ## TODO: Specify model architecture
     model_transfer = models.resnet50(pretrained=True)
